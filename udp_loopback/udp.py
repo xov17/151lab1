@@ -1,5 +1,5 @@
 #UDP Client and Server
-
+# only for same comp
 import socket, sys
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
