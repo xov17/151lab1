@@ -3,6 +3,12 @@
 # (2) Round-Trip Time
 # (3) Packet Loss
 
+# How to Use:
+# Server: python udp.py server HOST(optional)
+#   ex: python udp.py server
+# Client: python udp.py client HOST
+#   ex: python udp.py 127.0.0.1
+
 import random, socket, sys, time
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -36,7 +42,7 @@ elif len(sys.argv) == 3 and sys.argv[1] == 'client':
     print 'Client socket name is', s.getsockname()
     delay = 0.1
     while True:
-        interval = raw_input('Time interval (in sec.)?')
+        interval = raw_input('Time interval (in sec.)? ')
         abort_after = float(interval)
         start = time.time()
 
