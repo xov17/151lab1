@@ -54,5 +54,5 @@ while 1:
 		if delta >= abort_after:
 			break
 
-	count = str(count)
-	print 'Msg count: ' + count
+count = str(count)
+print 'Msg count: ' + count
