@@ -2,6 +2,13 @@
 # (1) End-to-end (maximum) throughput
 # (2) Round-Trip Time
 # (3) Packet Loss
+#
+# Should display minimum, maximum and average values
+
+# (1) End-to-end (maximum) throughput
+#   
+# (2) Round-Trip Time
+# (3) Packet Loss
 
 # How to Use:
 # Server: python udp.py server HOST(optional)
