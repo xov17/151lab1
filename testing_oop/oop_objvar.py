@@ -1,3 +1,5 @@
+import pdb
+
 class Robot:
 	"""Represents a robot, with a name."""
 
@@ -37,6 +39,7 @@ class Robot:
 		print "We have {:d} robots.".format(cls.population)
 
 droid1 = Robot("R2-D2")
+pdb.set_trace()
 droid1.say_hi()
 Robot.how_many()
 
@@ -51,3 +54,5 @@ droid1.die()
 droid2.die()
 
 Robot.how_many()
+
+print Robot.__doc__
