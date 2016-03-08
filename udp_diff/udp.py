@@ -36,7 +36,8 @@ elif len(sys.argv) == 3 and sys.argv[1] == 'client':
             if delay > 2.0:
                 raise RuntimeError('I think the server is down')
         except:
-            raise # a real error, so we let the user see it
+            raise
+            #raise # a real error, so we let the user see it
         
            # break # we are done, and can stop looping
         
