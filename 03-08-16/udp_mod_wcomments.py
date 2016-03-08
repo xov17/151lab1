@@ -12,8 +12,8 @@ logging.basicConfig(level=logging.CRITICAL,
 
 MAX = 65535
 PORT = 1073
-WINDOW_SIZE = 1
-PACKET_SIZE = 64
+WINDOW_SIZE = 10
+PACKET_SIZE = 10
 
 PACKET_LOSS = 0
 DELAY = 0.001
@@ -45,7 +45,14 @@ def consumer_client(cond):
 		logging.debug('Sent message: %s', message)
 	
 
+"""
+	Client
+		has timeout -> for receiving a loss packet
+		checks if message received is same
+			"wrong message"
+			received message
 
+"""
 		s.settimeout(DELAY)
 		try:
  			data = s.recv(MAX)
@@ -65,7 +72,15 @@ def consumer_client(cond):
  			logging.debug('Packet loss: %d', PACKET_LOSS)
  			cond.release()
 		
-
+"""
+		except:
+			logging.debug('Packet loss increments')
+			cond.acquire()
+			PACKET_LOSS = PACKET_LOSS + 1
+			logging.debug('Packet loss: %d', PACKET_LOSS)
+			#raise 
+			cond.release()
+"""		
 		cond.acquire()
 		if ((RETURNED_PACKETS+ PACKET_LOSS) == WINDOW_SIZE):
 			logging.debug('Total Packet loss: %d', PACKET_LOSS)
@@ -119,6 +134,43 @@ if 2<= len(sys.argv) <= 3 and sys.argv[1] == 'server':
 		else:
 			logging.debug("Received wrong length")
 			s.sendto(wrong_msg,address)
+"""
+		if (data ==  'lhfhgklahglhairhiwah'): 
+			print 'correct data'
+			print 'Your data was %d bytes' % len(data)
+			s.sendto(data,address)
+		else:
+			logging.debug('Data: %s , Your data was %d bytes', data, len(data))
+			server_msg = "OK: "+ data
+			s.sendto(server_msg,address)
+			logging.debug('Data: %s , Address: %s', data, address)
+			#print 'wrong data'\
+"""
+"""
+	Client sends data to server.
+	SYN_ACK
+
+	#Server may or may not receive data
+	if (Server receives data) {
+		send data back to client
+	} else {
+
+	}
+
+	Server
+		checks length
+			if wrong, sends error code to client "wrong message"
+
+			if right, sends back message to client
+
+	Client
+		has timeout -> for receiving a loss packet
+		checks if message received is same
+			"wrong message"
+			received message
+
+
+"""
 
 
 
@@ -126,10 +178,15 @@ elif len(sys.argv) == 3 and sys.argv[1] == 'client':
 
 	# Time interval after which result/s will be displayed
 	# Results may be multiple as 
+	interval = raw_input('Time interval (in sec.)? ')
+	abort_after = float(interval)
+"""
+	Release results after interval
 
-	#interval = raw_input('Time interval (in sec.)? ')
-	#abort_after = float(interval)
+	Run test for interval, storing different results
 
+
+"""
 
 	condition = threading.Condition()
 	for i in range(WINDOW_SIZE):
