@@ -18,7 +18,7 @@ PACKET_SIZE = 10
 DELAY = 0.1
 
 
-def consumer_client(cond):
+def consumer_client(cond,cond2):
 	
 	logging.debug('Starting consumer thread')
 	hostname = sys.argv[2]
@@ -91,11 +91,14 @@ if 2<= len(sys.argv) <= 3 and sys.argv[1] == 'server':
 
 elif len(sys.argv) == 3 and sys.argv[1] == 'client':
 	condition = threading.Condition()
+	cond2 = threading.Condition()
 	for i in range(WINDOW_SIZE):
-		t = threading.Thread(target=consumer_client, args=(condition,))
+		t = threading.Thread(target=consumer_client, args=(condition,cond2,))
 		t.start()
 	p = threading.Thread(name='p_client', target=producer_client, args=(condition,))
 	p.start()
+	cond2.wait()
+	print "Cond2 finished waiting"
 	
 	
 else:

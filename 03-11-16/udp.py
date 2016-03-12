@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.CRITICAL,
 					format='%(asctime)s (%(threadName)-2s) %(message)s')
 
 MAX = 65535
-PORT = 1078
+PORT = 1063
 WINDOW_SIZE = 1
 PACKET_SIZE = 64
 
@@ -28,7 +28,7 @@ RETURNED_PACKETS = 0
 
 # 	Test for same window size, different packet sizes
 
-def consumer_client(cond):
+def consumer_client(cond, main_cond):
 	global PACKET_LOSS
 	global RETURNED_PACKETS
 	global START_TIME
@@ -89,17 +89,21 @@ def consumer_client(cond):
 			print "Throughput: ", throughput_b, " bits/sec"
 			print "data kb: ", data_received/1024
 			print "data mb: ", data_received/(1024*1024)
+			with main_condition:
+				main_cond.notifyAll()
+			
 			#logging.debug('RTT: %lf', END_TIME-START_TIME)
 		cond.release()
   		#print 'Client socket name is', s.getsockname()
 
-def producer_client(cond):
+def producer_client(cond, main_cond):
 	global START_TIME
 	logging.debug('Starting producer thread')
 	with cond:
 		logging.debug('Making resource available')
 		cond.notifyAll()
 		START_TIME = time.time()
+
 
 
 if 2<= len(sys.argv) <= 3 and sys.argv[1] == 'server':
@@ -132,14 +136,34 @@ elif len(sys.argv) == 3 and sys.argv[1] == 'client':
 	#interval = raw_input('Time interval (in sec.)? ')
 	#abort_after = float(interval)
 
+	interval = float(raw_input('Time interval (in sec.)? '))
+
+
+	#threads = []
+
+
+	
+	
+	#for i in range(WINDOW_SIZE):
+		#t = threading.Thread(target=consumer_client, args=(condition,main_condition,))
+		#threads.append(t)
 
 	condition = threading.Condition()
+	main_condition = threading.Condition()
 	
-	for i in range(WINDOW_SIZE):
-		t = threading.Thread(target=consumer_client, args=(condition,))
-		t.start()
-	p = threading.Thread(name='p_client', target=producer_client, args=(condition,))
-	p.start()
+
+	while True:
+		
+		p = threading.Thread(name='p_client', target=producer_client, args=(condition,main_condition,))
+		for i in range(WINDOW_SIZE):
+			t = threading.Thread(target=consumer_client, args=(condition,main_condition,))
+			t.start()
+		p.start()
+		with main_condition:
+			main_condition.wait()
+			print "ITERATED!"
+			condition.acquire()
+			main_condition.acquire()
 
 	
 	

@@ -14,7 +14,7 @@
 # Server: python udp.py server HOST(optional)
 #   ex: python udp.py server
 # Client: python udp.py client HOST
-#   ex: python udp.py 127.0.0.1
+#   ex: python udp.py client 127.0.0.1
 
 import random, socket, sys, time, hashlib
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
