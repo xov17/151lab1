@@ -4,6 +4,7 @@ import threading
 import time
 from random import choice
 from string import lowercase
+from decimal import Decimal
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -11,7 +12,7 @@ logging.basicConfig(level=logging.CRITICAL,
 					format='%(asctime)s (%(threadName)-2s) %(message)s')
 
 MAX = 65535
-PORT = 1063
+PORT = 1067
 WINDOW_SIZE = 1
 PACKET_SIZE = 64
 
@@ -87,13 +88,16 @@ def consumer_client(cond, main_cond):
 			print "Throughput: ", throughput_kb, " kb/sec"
 			print "Throughput: ", throughput, " bytes/sec"
 			print "Throughput: ", throughput_b, " bits/sec"
+			print "data bytes: ", data_received
 			print "data kb: ", data_received/1024
 			print "data mb: ", data_received/(1024*1024)
-			with main_condition:
+			with main_cond:
+				main_cond.release()
 				main_cond.notifyAll()
 			
 			#logging.debug('RTT: %lf', END_TIME-START_TIME)
 		cond.release()
+		cond.notifyAll()
   		#print 'Client socket name is', s.getsockname()
 
 def producer_client(cond, main_cond):
@@ -109,7 +113,8 @@ def producer_client(cond, main_cond):
 if 2<= len(sys.argv) <= 3 and sys.argv[1] == 'server':
 	interface = sys.argv[2] if len(sys.argv) > 2 else ''
 	s.bind((interface, PORT))
-	logging.debug('Listening at %s', s.getsockname() )
+	print 'Listening at ', s.getsockname()
+	
 	condition = threading.Condition()
 
 	wrong_msg = "Wrong Message"
@@ -161,9 +166,13 @@ elif len(sys.argv) == 3 and sys.argv[1] == 'client':
 		p.start()
 		with main_condition:
 			main_condition.wait()
-			print "ITERATED!"
-			condition.acquire()
-			main_condition.acquire()
+			with condition:
+				condition.wait()
+				print "ITERATED!"
+				condition.acquire()
+				main_condition.acquire()
+		
+			
 
 	
 	

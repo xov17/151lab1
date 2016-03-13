@@ -87,6 +87,7 @@ def consumer_client(cond):
 			print "Throughput: ", throughput_kb, " kb/sec"
 			print "Throughput: ", throughput, " bytes/sec"
 			print "Throughput: ", throughput_b, " bits/sec"
+			print "data bytes: ", data_received
 			print "data kb: ", data_received/1024
 			print "data mb: ", data_received/(1024*1024)
 			#logging.debug('RTT: %lf', END_TIME-START_TIME)
